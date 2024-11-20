@@ -63,7 +63,7 @@ architecture Behavioral of game is
         if ((sw1 = '1') or (sw2 = '1')) then
             speed1 <= speed + 24;
         end if;
-    end process; 
+    end process;  
     rnclk <= divclk(speed1);
     process(rnclk,Rst,sw1,sw2)
     begin
@@ -101,7 +101,7 @@ architecture Behavioral of game is
                         Rscore <= "0000";
                         current_state <= start;
                     else
-                        ping <= "0000" & Lscore(3 downto 0);
+                        ping <= (Rscore(0)& Rscore(1)& Rscore(2)& Rscore(3)) & Lscore(3 downto 0);
                         current_state <= Rserve;
                     end if;
                 when Rwin =>
@@ -111,7 +111,7 @@ architecture Behavioral of game is
                         Rscore <= "0000";
                         current_state <= start;
                     else
-                        ping <= (Rscore(0)& Rscore(1)& Rscore(2)& Rscore(3)) & "0000";
+                        ping <= (Rscore(0)& Rscore(1)& Rscore(2)& Rscore(3)) & Lscore(3 downto 0);
                         current_state <= Lserve;
                     end if;
                 when  Lhit    =>
@@ -145,6 +145,7 @@ architecture Behavioral of game is
             end case;
         end if;
     end process;
+
     LED <= ping;
     
     with Lscore select --7段顯示 (解碼器)

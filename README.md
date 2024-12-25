@@ -12,3 +12,7 @@ pwm_led呼吸燈
 # HW-4
 乒乓：
 [demo](https://youtu.be/_GDvLpNtLqQ)
+
+# HW-5
+VGA顯示、VGA乒乓：
+[demo]

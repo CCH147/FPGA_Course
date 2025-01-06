@@ -15,7 +15,7 @@ pwm_led呼吸燈
 
 # HW-5
 VGA顯示：
-
+![image](https://github.com/CCH147/FPGA_Course/blob/678aede65250857588a43c801dbe50ccc2b88a55/HW5/result.png)
 
 # HW-6
 VGA乒乓：

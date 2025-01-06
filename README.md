@@ -24,3 +24,7 @@ VGA乒乓：
 # HW-7
 VGA乒乓：
 [demo](https://youtu.be/7kogg_nL-Hs)
+
+  
+# commit 紀錄：
+![commits_main](https://github.com/user-attachments/assets/864fcdc2-98ab-4832-b845-b5ca87d236a4)

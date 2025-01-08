@@ -27,7 +27,7 @@ architecture Behavioral of pingpong is
 	signal ball    : std_logic_vector(7 downto 0);
 	signal score_l : std_logic_vector(3 downto 0);
 	signal score_r : std_logic_vector(3 downto 0);
-	type   state_type is (initial,move_left,move_right,win_l,win_r,ready_ml,ready_mr);
+	type   state_type is (initial,left_shift,right_shift,Lwin,Rwin,ready_ml,ready_mr);
 	signal state   : state_type;
 	signal pre_state : state_type;
 	signal i : integer range 0 to 30;
@@ -43,7 +43,7 @@ architecture Behavioral of pingpong is
     constant vStartSync  : integer := 490;  -- start of vertical sync pulse
     constant vEndSync    : integer := 492;  -- end of vertical sync pulse
     constant vMaxCount   : integer := 525;  -- total lines per frame
-	signal h_shift     : integer;
+	signal x_shift     : integer;
 	signal h_shift_b   : integer;
     signal hCount : integer := 0;
     signal vCount : integer := 0;
@@ -90,23 +90,23 @@ begin
 		case state is
 			when initial =>
 				if btn_l = '1' then
-					state <= move_right;
+					state <= right_shift;
 				end if;
-			when move_right =>
+			when right_shift =>
 				if ball = "10000000" and btn_r = '1' then
-					state <= move_left;
+					state <= left_shift;
 					
                 elsif (ball = "00000000") or (ball > "00000001" and btn_r = '1') then
-				    state <= win_l;
+				    state <= Lwin;
 				end if;
-			when move_left =>
+			when left_shift =>
 				if ball = "00000001" and btn_l = '1' then
-					state <= move_right;
+					state <= right_shift;
 					
                 elsif (ball = "00000000") or (ball > "10000000" and btn_l = '1') then
-				    state <= win_r;
+				    state <= Rwin;
 				end if;
-			when win_l =>
+			when Lwin =>
 				if score_l = "0100" then
 					state <= initial;
 				else
@@ -114,7 +114,7 @@ begin
 						state <= ready_mr;
 					end if;
 				end if;
-			when win_r =>
+			when Rwin =>
 				if score_r = "0100" then
 					state <= initial;
 				else
@@ -124,12 +124,12 @@ begin
 				end if;
 			when ready_mr =>
 				if ball = "00000001" then 
-					state <= move_right;
+					state <= right_shift;
 				else state <= ready_mr;
 				end if;
 			when ready_ml =>
 				if ball = "10000000" then 
-					state <= move_left;
+					state <= left_shift;
 				else 
 					state <= ready_ml;
 				end if;
@@ -145,24 +145,24 @@ begin
 		case state is
 			when initial =>
 				ball <= "00000001";
-			when move_right =>
+			when right_shift =>
 				ball <= ball(6 downto 0) & '0';
-                h_shift <= h_shift + 60; --vga座標顯示位移
-			when move_left =>
+                x_shift <= x_shift + 60; --vga座標顯示位移
+			when left_shift =>
 				ball <= '0' & ball(7 downto 1);
-                h_shift <= h_shift - 60; --vga座標顯示位移
-			when win_l =>
+                x_shift <= x_shift - 60; --vga座標顯示位移
+			when Lwin =>
 				ball <= score_r & score_l;
-                h_shift <= 60;
-			when win_r =>
+                x_shift <= 60;
+			when Rwin =>
 				ball <= score_r & score_l;
-                h_shift <= 500;
+                x_shift <= 500;
 			when ready_mr =>
 				ball <= "00000001";
-                h_shift <= 60;
+                x_shift <= 60;
 			when ready_ml =>
 				ball <= "10000000";
-                h_shift <= 500;
+                x_shift <= 500;
 		end case;
 	end if;
 end process;
@@ -177,18 +177,18 @@ begin
 			when initial =>
                 score_l <= "0000";
 				score_r <= "0000";
-			when move_right =>
+			when right_shift =>
 				null;
-			when move_left =>
+			when left_shift =>
                 null;
-			when win_l =>
-			    if pre_state = move_right then
+			when Lwin =>
+			    if pre_state = right_shift then
 					score_l <= score_l + '1';
 				else 
 					score_l <= score_l;
 				end if;
-			when win_r =>
-				if pre_state = move_left then
+			when Rwin =>
+				if pre_state = left_shift then
 					score_r <= score_r + '1';
 				else 
 					score_r <= score_r;
@@ -254,17 +254,20 @@ begin
         --end if;
 	elsif rising_edge(vga_clk) then
 		if (hCount <= hRez and vCount <= vRez) then
-			if (hCount >= (0+h_shift_b ) and hCount <= (319+h_shift_b) and vCount >= 0 and vCount <= 239) then
-				addr  <= addr + 1;
+			if (hCount >= x_shift and hCount <= (x_shift + 99) and vCount >= 0 and vCount <= (240)) then
                 red<="1111" - block_out(7 downto 4); 
                 green<="1111" - block_out(7 downto 4); 
                 blue<="1111" - block_out(7 downto 4);
-			elsif (hCount = (320+h_shift_b ) and vCount = 240) then
-				addr  <= "00000000000000000";
+                addr  <= addr + 1;
+			elsif ((hCount = (x_shift + 99 + 1) and vCount = (x_shift + 99 + 1)))then
+				addr <= (others=>'0');
+            else 
+                red <= "0000";
+                green <= "0000";
+                blue <= "0000";
 			end if;
 		end if;
 	end if;
-
 
 	
 

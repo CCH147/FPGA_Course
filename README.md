@@ -1,5 +1,7 @@
 # HW1 
 上下限計數器：
+[報告](https://github.com/CCH147/FPGA_Course/blob/main/HW1/HW1_Counter.pptx)
+
 [影片demo](https://www.youtube.com/watch?v=auDCN3skkN4)
 
 # HW2

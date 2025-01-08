@@ -22,7 +22,7 @@ VGA乒乓：
 [demo](https://youtu.be/EF9Im5Y13n8)
 
 # HW-7
-VGA乒乓：
+乒乓對打：
 [demo](https://youtu.be/7kogg_nL-Hs)
 
   
